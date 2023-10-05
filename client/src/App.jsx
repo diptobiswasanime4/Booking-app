@@ -1,10 +1,34 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { Routes, Route, Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
 function App() {
-  return <div className="text-2xl">Hello World</div>;
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />}></Route>
+      </Route>
+    </Routes>
+  );
+}
+
+function Layout() {
+  return (
+    <main>
+      <Navbar />
+      <Outlet />
+      <Footer />
+    </main>
+  );
+}
+
+function Home() {
+  return (
+    <div className="body-section">
+      <div>Home Page</div>
+    </div>
+  );
 }
 
 export default App;
