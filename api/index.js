@@ -49,25 +49,29 @@ app.post("/register", async (req, res) => {
   }
 });
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-  if (!userDoc) {
-    res.json({ msg: "Invalid username.", loggedIn: false });
-  } else {
-    const checkPassword = bcrypt.compareSync(password, userDoc.hashPassword);
-    if (!checkPassword) {
-      res.json({ msg: "Invalid password.", loggedIn: false });
+  try {
+    const { email, password } = req.body;
+    const userDoc = await User.findOne({ email });
+    if (!userDoc) {
+      res.json({ msg: "Invalid username.", loggedIn: false });
     } else {
-      jwt.sign(
-        { name: userDoc.name, email: userDoc.email, id: userDoc._id },
-        process.env.JWT_SECRET,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json({ userDoc, token, loggedIn: true });
-        }
-      );
+      const checkPassword = bcrypt.compareSync(password, userDoc.hashPassword);
+      if (!checkPassword) {
+        res.json({ msg: "Invalid password.", loggedIn: false });
+      } else {
+        jwt.sign(
+          { name: userDoc.name, email: userDoc.email, id: userDoc._id },
+          process.env.JWT_SECRET,
+          {},
+          (err, token) => {
+            if (err) throw err;
+            res.cookie("token", token).json({ userDoc, token, loggedIn: true });
+          }
+        );
+      }
     }
+  } catch (err) {
+    res.json({ msg: "Token not found" });
   }
 });
 app.get("/profile", async (req, res) => {
@@ -80,6 +84,14 @@ app.get("/profile", async (req, res) => {
     });
   } catch (err) {
     res.json({ msg: "Got an error.", Error: err });
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  try {
+    res.cookie("token", "").json({ loggedIn: false });
+  } catch (err) {
+    res.json({ msg: "No token" });
   }
 });
 

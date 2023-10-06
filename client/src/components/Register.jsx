@@ -42,7 +42,7 @@ export default function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="text-white bg-violet-600 text-xl px-4 pb-1 rounded-2xl shadow">
+        <button className="text-white bg-violet-600 hover:bg-violet-500 text-xl px-4 pb-1 rounded-2xl shadow">
           Register
         </button>
         <div className="goto-register">
