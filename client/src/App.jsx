@@ -18,6 +18,7 @@ function App() {
         <Route path="login" element={<Login />}></Route>
         <Route path="register" element={<Register />}></Route>
         <Route path="account/:category?" element={<Account />}></Route>
+        <Route path="account/:category/:action" element={<Account />}></Route>
       </Route>
     </Routes>
   );
