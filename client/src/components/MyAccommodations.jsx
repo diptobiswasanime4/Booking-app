@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
+import NewAccommodation from "./NewAccommodation";
 
 export default function MyAccommodations() {
   const { action } = useParams();
@@ -32,22 +33,7 @@ export default function MyAccommodations() {
           <div>My Accomodations</div>
         </div>
       )}
-      {action == "new" && (
-        <form className="mx-8 mb-16">
-          <div className="text-xl p-1">Title</div>
-          <input
-            className="border pl-1 pb-1 rounded-md shadow w-full text-lg"
-            type="text"
-            placeholder="my apartment"
-          />
-          <div className="text-xl p-1">Address</div>
-          <input
-            className="border pl-1 pb-1 rounded-md shadow w-full text-lg"
-            type="text"
-            placeholder="Address"
-          />
-        </form>
-      )}
+      {action == "new" && <NewAccommodation />}
     </div>
   );
 }

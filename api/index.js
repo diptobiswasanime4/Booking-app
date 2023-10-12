@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const imageDownloader = require("image-downloader");
 
 const User = require("./models/User");
 
@@ -95,6 +96,12 @@ app.post("/logout", async (req, res) => {
   }
 });
 
+app.post("/upload-photo-by-link", async (req, res) => {
+  try {
+  } catch (error) {
+    res.json({ msg: error });
+  }
+});
 app.listen(PORT, () => {
   console.log(`App running on PORT ${PORT}`);
 });
