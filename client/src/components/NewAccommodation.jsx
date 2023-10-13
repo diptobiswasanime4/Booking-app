@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export default function NewAccommodation() {
   const [title, setTitle] = useState("");
@@ -9,6 +10,12 @@ export default function NewAccommodation() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+
+  async function addPhotoByLink(e) {
+    e.preventDefault();
+    const resp = await axios.post("/upload-photo-by-link", { link: photoLink });
+    console.log(resp.data);
+  }
   return (
     <form className="mx-8 mb-16 flex flex-col gap-2">
       <div className="">
@@ -43,28 +50,42 @@ export default function NewAccommodation() {
             className="border shadow-sm w-full pl-1 text-lg rounded-xl"
             type="text"
             placeholder="Upload by link"
+            value={photoLink}
+            onChange={(e) => setPhotoLink(e.target.value)}
           />
-          <button className="text-white bg-violet-600 hover:bg-violet-500 text-xl px-3 pb-1 rounded-2xl shadow">
+          <button
+            onClick={addPhotoByLink}
+            className="text-white bg-violet-600 hover:bg-violet-500 text-xl px-3 pb-1 rounded-2xl shadow"
+          >
             Add
           </button>
         </div>
-        <button className="border w-48 h-32 text-xl px-4 mt-2 rounded-2xl shadow flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-16 h-24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75"
+        <div className="flex items-center gap-2">
+          <button className="border w-48 h-32 text-xl px-4 mt-2 rounded-2xl shadow flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-16 h-24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75"
+              />
+            </svg>
+            Upload from your device
+          </button>
+          <div className="">
+            <img
+              src="http://localhost:3000/uploads/1697172139225.jpg"
+              alt="image"
+              className="h-32 rounded-md"
             />
-          </svg>
-          Upload from your device
-        </button>
+          </div>
+        </div>
       </div>
       <div className="">
         <div className="text-xl p-1">Perks</div>

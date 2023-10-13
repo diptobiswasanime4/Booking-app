@@ -15,6 +15,7 @@ const PORT = 3000;
 
 dotenv.config();
 
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
   cors({
     credentials: true,
@@ -98,6 +99,15 @@ app.post("/logout", async (req, res) => {
 
 app.post("/upload-photo-by-link", async (req, res) => {
   try {
+    const { link } = req.body;
+    const newName = Date.now() + ".jpg";
+    const options = {
+      url: link,
+      dest: __dirname + "/uploads/" + newName,
+    };
+    console.log(options.dest);
+    const resp = await imageDownloader.image(options);
+    res.json({ resp, options });
   } catch (error) {
     res.json({ msg: error });
   }
