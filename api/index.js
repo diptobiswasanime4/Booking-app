@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
+const multer = require("multer");
 
 const User = require("./models/User");
 
@@ -22,6 +23,7 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -107,11 +109,23 @@ app.post("/upload-photo-by-link", async (req, res) => {
     };
     console.log(options.dest);
     const resp = await imageDownloader.image(options);
-    res.json({ resp, options });
+    res.json({ resp, options, link: newName });
   } catch (error) {
     res.json({ msg: error });
   }
 });
+
+const photosMiddleware = multer({ dest: "uploads" });
+app.post(
+  "/upload-photo-from-device",
+  photosMiddleware.array("photos", 100),
+  async (req, res) => {
+    console.log("Hi");
+    console.log(req.body.photos);
+    res.json({ msg: "Upload Photo by Link" });
+  }
+);
+
 app.listen(PORT, () => {
   console.log(`App running on PORT ${PORT}`);
 });

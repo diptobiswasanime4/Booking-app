@@ -11,10 +11,27 @@ export default function NewAccommodation() {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
 
+  async function removePhoto(index) {
+    setAddedPhotos((prevPhotos) => prevPhotos.splice(index, 1));
+  }
+
+  async function addPhotoFromDevice(e) {
+    e.preventDefault();
+    const files = e.target.files;
+    const data = new FormData();
+    data.set("photos", files);
+    const resp = await axios.post("/upload-photo-from-device", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log(resp);
+  }
+
   async function addPhotoByLink(e) {
     e.preventDefault();
     const resp = await axios.post("/upload-photo-by-link", { link: photoLink });
     console.log(resp.data);
+    setAddedPhotos((prevPhotos) => [...prevPhotos, resp.data.link]);
+    console.log(addedPhotos);
   }
   return (
     <form className="mx-8 mb-16 flex flex-col gap-2">
@@ -31,6 +48,8 @@ export default function NewAccommodation() {
       <div className="">
         <div className="text-xl p-1">Address</div>
         <input
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
           className="border pl-1 pb-1 rounded-md shadow w-full text-lg"
           type="text"
           placeholder="My apartment address"
@@ -39,6 +58,8 @@ export default function NewAccommodation() {
       <div className="">
         <div className="text-xl p-1">Description</div>
         <textarea
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
           className="border shadow-md rounded-md pl-1 w-full h-16"
           placeholder="My apartment is excellent!"
         ></textarea>
@@ -60,8 +81,13 @@ export default function NewAccommodation() {
             Add
           </button>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="border w-48 h-32 text-xl px-4 mt-2 rounded-2xl shadow flex items-center">
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="border cursor-pointer w-48 h-32 text-xl px-4 mt-2 rounded-2xl shadow flex gap-1 items-center">
+            <input
+              type="file"
+              className="hidden"
+              onChange={addPhotoFromDevice}
+            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -77,14 +103,35 @@ export default function NewAccommodation() {
               />
             </svg>
             Upload from your device
-          </button>
-          <div className="">
-            <img
-              src="http://localhost:3000/uploads/1697172139225.jpg"
-              alt="image"
-              className="h-32 rounded-md"
-            />
-          </div>
+          </label>
+          {addedPhotos.length > 0 &&
+            addedPhotos.map((photo, index) => {
+              console.log("http://localhost:3000/uploads/" + photo);
+              return (
+                <div className="" key={index}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="relative top-12 text-white w-10 h-10 cursor-pointer hover:bg-gray-500 p-1 hover:rounded-full"
+                    onClick={() => removePhoto(index)}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
+                  <img
+                    src={"http://localhost:3000/uploads/" + photo}
+                    alt="image"
+                    className="h-32 mt-2 rounded-md"
+                  />
+                </div>
+              );
+            })}
         </div>
       </div>
       <div className="">
