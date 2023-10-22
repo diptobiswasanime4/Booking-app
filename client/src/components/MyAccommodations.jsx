@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import NewAccommodation from "./NewAccommodation";
+import axios from "axios";
 
 export default function MyAccommodations() {
   const { action } = useParams();
+  const [accommodations, setAccommodations] = useState([]);
+  useEffect(() => {
+    axios.get("/places").then((resp) => {
+      console.log(resp.data);
+      setAccommodations(resp.data);
+    });
+    return () => {};
+  }, []);
+
   return (
     <div>
       {action != "new" && (
@@ -30,7 +40,33 @@ export default function MyAccommodations() {
               Add new Accommodation
             </div>
           </Link>
-          <div>My Accomodations</div>
+          <div className="text-center text-2xl mt-4 mb-4">My Accomodations</div>
+          <div className="grid grid-cols-2 mb-8">
+            {accommodations.map((accommodation, index) => {
+              return (
+                <Link
+                  to={"/account/accommodations/" + accommodation._id}
+                  key={index}
+                  className="flex flex-col gap-2 shadow-md border m-3 p-3 rounded-xl bg-gray-300"
+                >
+                  <img
+                    className="border rounded-lg"
+                    src={
+                      "http://localhost:3000/uploads/" + accommodation.photos[0]
+                    }
+                    alt="accommodation"
+                  />
+                  <div className="text-xl text-center">
+                    {accommodation.title}
+                  </div>
+                  <div className="text-md text-center">
+                    {accommodation.address}
+                  </div>
+                  <div className="">{accommodation.desc}</div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
       )}
       {action == "new" && <NewAccommodation />}

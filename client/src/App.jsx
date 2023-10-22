@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Account from "./components/Account";
+import Accommodation from "./components/Accommodation";
 import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:3000";
@@ -19,6 +20,10 @@ function App() {
         <Route path="register" element={<Register />}></Route>
         <Route path="account/:category?" element={<Account />}></Route>
         <Route path="account/:category/:action" element={<Account />}></Route>
+        <Route
+          path="account/accommodations/:id"
+          element={<Accommodation />}
+        ></Route>
       </Route>
     </Routes>
   );

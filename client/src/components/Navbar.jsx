@@ -21,7 +21,7 @@ export default function Navbar() {
             d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
           />
         </svg>
-        <div className="logo-text">Aeroway</div>
+        <div className="logo-text">AeroGo</div>
       </Link>
       <div className="options-search flex gap-2 border p-2 rounded-full shadow">
         <div className="cursor-pointer transform transition-transform duration-500 hover:scale-105">

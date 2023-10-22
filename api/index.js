@@ -154,6 +154,19 @@ app.post("/places", async (req, res) => {
   });
 });
 
+app.get("/places", async (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) throw err;
+    const { id } = userData;
+    const userDoc = await User.find({ _id: id });
+    console.log(userDoc);
+    const places = await Place.find({ owner: id });
+    console.log(places);
+    res.json(places);
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`App running on PORT ${PORT}`);
 });
