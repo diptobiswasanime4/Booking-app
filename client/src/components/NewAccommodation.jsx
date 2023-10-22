@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 export default function NewAccommodation() {
   const [title, setTitle] = useState("");
@@ -7,9 +8,12 @@ export default function NewAccommodation() {
   const [desc, setDesc] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [photoLink, setPhotoLink] = useState("");
+  const [perks, setPerks] = useState({});
+  const [extraInfo, setExtraInfo] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
+  const [redirect, setRedirect] = useState(false);
 
   async function removePhoto(index) {
     setAddedPhotos((prevPhotos) => prevPhotos.splice(index, 1));
@@ -18,12 +22,16 @@ export default function NewAccommodation() {
   async function addPhotoFromDevice(e) {
     e.preventDefault();
     const files = e.target.files;
+    console.log(files);
     const data = new FormData();
-    data.set("photos", files);
+    for (let i = 0; i < files.length; i++) {
+      data.append("photos", files[i]);
+    }
     const resp = await axios.post("/upload-photo-from-device", data, {
       headers: { "Content-Type": "multipart/form-data" },
     });
-    console.log(resp);
+    const photos = resp.data;
+    setAddedPhotos((prevPhotos) => [...prevPhotos, ...photos]);
   }
 
   async function addPhotoByLink(e) {
@@ -33,8 +41,22 @@ export default function NewAccommodation() {
     setAddedPhotos((prevPhotos) => [...prevPhotos, resp.data.link]);
     console.log(addedPhotos);
   }
+
+  async function addNewAccommodation(e) {
+    e.preventDefault();
+    const data = { title, address, addedPhotos, desc };
+    const resp = await axios.post("/places", data);
+    setRedirect(true);
+    console.log(redirect);
+  }
+  if (redirect) {
+    return <Navigate to={"/account/accommodations"} />;
+  }
   return (
-    <form className="mx-8 mb-16 flex flex-col gap-2">
+    <form
+      className="mx-8 mb-16 flex flex-col gap-2"
+      onSubmit={addNewAccommodation}
+    >
       <div className="">
         <div className="text-xl p-1">Title</div>
         <input
@@ -85,6 +107,7 @@ export default function NewAccommodation() {
           <label className="border cursor-pointer w-48 h-32 text-xl px-4 mt-2 rounded-2xl shadow flex gap-1 items-center">
             <input
               type="file"
+              multiple
               className="hidden"
               onChange={addPhotoFromDevice}
             />
@@ -257,9 +280,12 @@ export default function NewAccommodation() {
           />
         </div>
       </div>
-      <div className="mt-8 cursor-pointer pb-1 px-3 text-xl rounded-full bg-violet-600 text-white shadow-md hover:bg-violet-500 text-center">
+      <button
+        type="submit"
+        className="mt-8 pb-1 px-3 text-xl rounded-full bg-violet-600 text-white shadow-md hover:bg-violet-500 text-center"
+      >
         Save
-      </div>
+      </button>
     </form>
   );
 }

@@ -10,12 +10,13 @@ const multer = require("multer");
 const fs = require("fs");
 
 const User = require("./models/User");
+const Place = require("./models/Place");
 
 const app = express();
 
-const PORT = 3000;
-
 dotenv.config();
+
+const PORT = process.env.PORT;
 
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(
@@ -54,6 +55,7 @@ app.post("/register", async (req, res) => {
     res.json({ userDoc, registered: true });
   }
 });
+
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -80,6 +82,7 @@ app.post("/login", async (req, res) => {
     res.json({ msg: "Token not found" });
   }
 });
+
 app.get("/profile", async (req, res) => {
   try {
     const { token } = req.cookies;
@@ -133,6 +136,23 @@ app.post(
     res.json(uploadedFiles);
   }
 );
+
+app.post("/places", async (req, res) => {
+  const { token } = req.cookies;
+  const { title, address, addedPhotos, desc } = req.body;
+  console.log(addedPhotos);
+  jwt.verify(token, process.env.JWT_SECRET, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDoc = await Place.create({
+      owner: userData.id,
+      title,
+      address,
+      photos: addedPhotos,
+      desc,
+    });
+    res.json(placeDoc);
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`App running on PORT ${PORT}`);
