@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
+const fs = require("fs");
 
 const User = require("./models/User");
 
@@ -26,6 +27,7 @@ app.use(
 app.use("/uploads", express.static(__dirname + "/uploads"));
 app.use(express.json());
 app.use(cookieParser());
+const photosMiddleware = multer({ dest: "uploads" });
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -115,14 +117,20 @@ app.post("/upload-photo-by-link", async (req, res) => {
   }
 });
 
-const photosMiddleware = multer({ dest: "uploads" });
 app.post(
   "/upload-photo-from-device",
   photosMiddleware.array("photos", 100),
   async (req, res) => {
-    console.log("Hi");
-    console.log(req.body.photos);
-    res.json({ msg: "Upload Photo by Link" });
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { originalname, path } = req.files[i];
+      const parts = originalname.split(".");
+      const ext = parts[parts.length - 1];
+      const newPath = path + "." + ext;
+      fs.renameSync(path, newPath);
+      uploadedFiles.push(newPath.replace("uploads\\", ""));
+    }
+    res.json(uploadedFiles);
   }
 );
 
